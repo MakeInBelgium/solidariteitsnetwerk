@@ -1,0 +1,9 @@
+'App\Entity\User':
+    koen:
+        firstName: 'Koen'
+        lastName: 'Van den Wijngaert'
+        email: 'koen@neok.be'
+        username: 'vdwijngaert'
+        roles: [ROLE_SUPERADMIN]
+        #SuperSecurePassword
+        password: <("\$argon2i\$v=19\$m=1024,t=2,p=2\$Zy5qSWR4dFJrME9XcG5Dcw\$FH+0klYCrL+0LubqveR5mxuxEo62SiNb3ou82xjQwJ8")>

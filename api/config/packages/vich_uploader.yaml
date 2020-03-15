@@ -1,0 +1,18 @@
+#parameters:
+#    env(HOST): 'localhost'
+#    env(PORT): 8443
+#    env(CONTENT_URL): 'https://%env(resolve:HOST)%%env(resolve:PORT)%'
+vich_uploader:
+    db_driver: orm
+    storage: flysystem
+
+    mappings:
+        media_object:
+            uri_prefix: '%uploads_base_url%'
+            upload_destination: assets.storage
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+            directory_namer:
+                service: vich_uploader.namer_directory_property
+                options: { property: 'directory', transliterate: true}
+            delete_on_update: true
+            delete_on_remove: true

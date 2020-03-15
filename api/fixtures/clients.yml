@@ -1,0 +1,48 @@
+App\Entity\PostalAddress:
+    address_vol_{1..100}:
+        streetAddress: <nl_BE:streetAddress()>
+        postalCode: <nl_BE:postcode()>
+        addressLocality: <nl_BE:city()>
+        addressRegion: <nl_BE:state()>
+        addressCountry: 'Belgium'
+    address_sen_{1..100}:
+        streetAddress: <nl_BE:streetAddress()>
+        postalCode: <nl_BE:postcode()>
+        addressLocality: <nl_BE:city()>
+        addressRegion: <nl_BE:state()>
+        addressCountry: 'Belgium'
+
+'App\Entity\Person':
+    volunteer_{1..100}:
+        givenName: <nl_BE:firstName()>
+        familyName: <nl_BE:lastName()>
+        email (unique): <nl_BE:email()>
+        gender: <randomElement(['http://schema.org/Male', 'http://schema.org/Female'])>
+        type: <randomElement(['VOLUNTEER', 'SENIOR'])>
+        description: <nl_BE:paragraphs(2, true)>
+        __calls:
+            - setAddress: ['@address_vol_<current()>']
+    senior_{1..100}:
+        givenName: <nl_BE:firstName()>
+        familyName: <nl_BE:lastName()>
+        email (unique): <nl_BE:email()>
+        gender: <randomElement(['http://schema.org/Male', 'http://schema.org/Female'])>
+        type: <randomElement(['VOLUNTEER', 'SENIOR'])>
+        description: <nl_BE:paragraphs(2, true)>
+        __calls:
+            - setAddress: ['@address_sen_<current()>']
+              
+
+'App\Entity\CareCase':
+    carecase_open_{1..25}:
+        caseName: <nl_BE:sentence(6, true)>
+        senior: '@senior_*'
+        description: <nl_BE:paragraphs(2, true)>
+        status: 'NEW'
+    carecase_other_{1..350}:
+        caseName: <nl_BE:sentence(6, true)>
+        senior: '@senior_*'
+        volunteer: '@volunteer_*'
+        description: <nl_BE:paragraphs(2, true)>
+        status: <randomElement(['ASSIGNED', 'ACCEPTED', 'REJECTED', 'ONGOING', 'DONE'])>
+        

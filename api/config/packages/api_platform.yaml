@@ -1,0 +1,44 @@
+parameters:
+    # Adds a fallback VARNISH_URL if the env var is not set.
+    # This allows you to run cache:warmup even if your
+    # environment variables are not available yet.
+    # You should not need to change this value.
+    env(VARNISH_URL): 'varnish'
+    env(resolve:VARNISH_URL): '%env(resolve:VARNISH_URL)%'
+
+api_platform:
+    title: Solidariteitsnetwerk.be
+    version: 1.0.0
+    show_webby: false
+    mapping:
+        paths: ['%kernel.project_dir%/src/Entity']
+    patch_formats:
+        json: ['application/merge-patch+json']
+    swagger:
+        versions: [3]
+        api_keys: # enable jwt
+            apiKey:
+                name: Authorization
+                type: header
+    # Mercure integration, remove if unwanted
+    mercure:
+        hub_url: '%env(MERCURE_SUBSCRIBE_URL)%'
+    #eager_loading: # possibly nodig
+    #    enabled: true
+    # collection settings
+    collection:
+        pagination:
+            #            enabled: false
+            page_parameter_name: page
+            #            client_enabled: true
+            #            enabled_parameter_name: pagination
+            items_per_page: 25
+            client_items_per_page: true # Disabled by default
+            items_per_page_parameter_name: perPage
+            maximum_items_per_page: 1000
+            partial: false
+            client_partial: true
+            partial_parameter_name: 'partial'
+    exception_to_status:
+        App\Exception\EmptyBodyException: 400
+        App\Exception\InvalidConfirmationTokenException: 401 # todo check, was 404

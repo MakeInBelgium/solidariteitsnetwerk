@@ -1,0 +1,84 @@
+version: '3.4'
+
+services:
+  php:
+    image: ${PHP_IMAGE:?PHP_IMAGE is not set or empty}
+    restart: always
+    depends_on:
+      - db
+    environment:
+      # You should remove these variables from .env into api folder
+      - APP_ENV=${APP_ENV}
+      - APP_SECRET=${APP_SECRET}
+      - TRUSTED_HOSTS=^(((${SUBDOMAINS_LIST}\.)?${DOMAIN_NAME})|api)$$
+      - TRUSTED_PROXIES=127.0.0.0/8,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16
+      - CORS_ALLOW_ORIGIN=^${HTTP_OR_SSL}(${SUBDOMAINS_LIST}.)?${DOMAIN_NAME}$$
+      - DATABASE_URL=postgres://${DB_USER}:${DB_PASS}@db/${DB_NAME}?server_version=${DB_VERSION}
+      - MERCURE_SUBSCRIBE_URL=${HTTP_OR_SSL}mercure.${DOMAIN_NAME}$$
+      - MERCURE_PUBLISH_URL=${HTTP_OR_SSL}mercure.${DOMAIN_NAME}$$
+      - MERCURE_JWT_SECRET=${JWT_KEY}
+      - MERCURE_JWT_TOKEN=${JWT_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      - JWT_PUBLIC_KEY=${JWT_PUBLIC_KEY}
+      - JWT_PASSPHRASE=${JWT_PASSPHRASE}
+      - CONTENT_URL=${HTTP_OR_SSL}${DOMAIN_NAME}
+    networks:
+      - default
+
+  api:
+    image: ${NGINX_IMAGE:?NGINX_IMAGE is not set or empty}
+    restart: always
+    depends_on:
+      - php
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.api.entrypoints=http"
+      - "traefik.http.routers.api.rule=Host(`api.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.api.middlewares=https-redirect@file"
+      - "traefik.http.routers.api-secure.entrypoints=https"
+      - "traefik.http.routers.api-secure.rule=Host(`api.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.api-secure.tls=true"
+      - "traefik.http.routers.api-secure.tls.certresolver=http"
+      - "traefik.docker.network=proxy"
+    networks:
+      - default
+      - proxy
+  db:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=${DB_NAME:?DB_NAME is not set or empty}
+      - POSTGRES_USER=${DB_USER:?DB_USER is not set or empty}
+      - POSTGRES_PASSWORD=${DB_PASS:?DB_PASS is not set or empty}
+    volumes:
+      # use a bind-mounted host directory, because we never want to lose our data!
+      - ./api/docker/db/data:/var/lib/postgresql/data:rw
+    networks:
+      - default
+
+  admin:
+    image: ${ADMIN_IMAGE:?ADMIN_IMAGE is not set or empty}
+    restart: always
+    expose:
+      - 3000
+    networks:
+      - default
+      - proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.entrypoints=http"
+      - "traefik.http.routers.admin.rule=Host(`admin.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.admin.middlewares=https-redirect@file"
+      - "traefik.http.routers.admin-secure.entrypoints=https"
+      - "traefik.http.routers.admin-secure.rule=Host(`admin.${DOMAIN_NAME}`)"
+      - "traefik.http.routers.admin-secure.tls=true"
+      - "traefik.http.routers.admin-secure.tls.certresolver=http"
+      - "traefik.docker.network=proxy"
+volumes:
+  db-data: {}
+
+networks:
+  default:
+    external: false
+  proxy:
+    external: true

@@ -1,0 +1,96 @@
+# See dos how to configure the bundle: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+liip_imagine:
+    # valid drivers options include "gd" or "gmagick" or "imagick"
+    driver: "gd"
+
+    loaders:
+        public_assets:
+            flysystem:
+                filesystem_service: assets.storage
+
+    data_loader: public_assets
+
+    # configure resolvers
+    resolvers:
+        # setup the default resolver
+        public_assets:
+            flysystem:
+                filesystem_service: assets.storage
+                root_url: '%uploads_base_url%'
+                cache_prefix: media/cache
+                visibility: "public"    
+            
+    cache: public_assets
+
+    # define your filter sets under this option
+    filter_sets:
+        #
+        #        # an example thumbnail transformation definition
+        #        # https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html#create-thumbnails
+        thumb_squared:
+            filters:
+                thumbnail:
+                    size:          [200, 200]
+                    mode:          outbound
+                    allow_upscale: true
+        thumb:
+            filters:
+                thumbnail:
+                    size:          [200, 200]
+                    mode:          inset
+                    allow_upscale: true
+                    
+
+        thumb_squared_md:
+            filters:
+                thumbnail:
+                    size:          [500, 500]
+                    mode:          outbound
+                    allow_upscale: true
+
+
+        thumb_md:
+            filters:
+                thumbnail:
+                    size:          [500, 500]
+                    mode:          inset
+                    allow_upscale: true
+
+        thumb_squared_lg:
+            filters:
+                thumbnail:
+                    size:          [1024, 1024]
+                    mode:          outbound
+                    allow_upscale: true
+
+        thumb_lg:
+            filters:
+                thumbnail:
+                    size:          [1024, 1024]
+                    mode:          inset
+                    allow_upscale: false
+#
+#            # set your image quality defaults
+#            jpeg_quality:          85
+#            png_compression_level: 8
+#
+#            # setup the filter steps to apply for this transformation
+#            filters:
+#
+#                # auto rotate the image using EXIF metadata
+#                auto_rotate: ~
+#
+#                # strip the image of all metadata
+#                strip: ~
+#
+#                # scale and square the image to the given dimensions
+#                thumbnail:
+#                    size:          [253, 253]
+#                    mode:          outbound
+#                    allow_upscale: true
+#
+#                # create border by placing image on larger black background
+#                background:
+#                    size:     [256, 256]
+#                    position: center
+#                    color:    '#fff'

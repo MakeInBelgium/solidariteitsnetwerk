@@ -1,0 +1,5 @@
+danaki_doctrine_enum_type:
+    types:
+        App\Enum\PersonType: ~
+        App\Enum\GenderType: ~
+        App\Enum\CareCaseStatus: ~
