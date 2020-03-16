@@ -14,7 +14,7 @@ De basis is gelegd. Er is bewezen wat er op korte tijd zoal mogelijk is om te bo
 * Testing
 * Meedenken over richting en strategie?
 
-*Join the fun!* Neem dan deel aan de conversatie op de Slack workspace van de Corona-denktank Make in Belgium: https://join.coronadenktank.be.
+*Join the fun!* Neem dan deel aan de conversatie op de Slack workspace van de Corona-denktank Make in Belgium: https://join.coronadenktank.be (Kanaal: #corona-seniorennet).
 
 ## Tech used
 Het platform werkt op basis van [API-Platform](https://www.api-platform.com): 
